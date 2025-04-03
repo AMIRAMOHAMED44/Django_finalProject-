@@ -1,12 +1,15 @@
-pip install django
-django-admin --version
-django-admin startproject final_project
-cd final_project
-python manage.py runserver
-python manage.py startapp app_name
-git remote add origin https://github.com/AMIRAMOHAMED44/Django_finalProject-.git
-git add .
-git commit -m ""
-git push origin main
-pip install psycopg2-binary
+#pip install django
+##django-admin --version
+#django-admin startproject final_project
+#cd final_project
+#python manage.py runserver
+#python manage.py startapp app_name
+#git remote add origin https://github.com/AMIRAMOHAMED44/Django_finalProject-.git
+#git add .
+#git commit -m ""
+#git push origin main
+#pip install psycopg2-binary
 
+Django>=4.0,<5.0
+djangorestframework>=3.14.0
+psycopg2>=2.9,<3.0
