@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Projects</h1>
+
+<div class="project-list">
+    {% for project in projects %}
+        <div class="project-card">
+            <h2>Project Image</h2>
+
+            {% if project.image %}
+                <img src="{{ project.image.url }}" alt="{{ project.title }} image" style="max-width: 300px;">
+            {% else %}
+                <p>No image available.</p>
+            {% endif %}
+
+
+            <h2>{{ project.title }}</h2>
+            <p>{{ project.details|truncatewords:20 }}</p>
+            <a href="{% url 'project_detail' project.id %}">Show details</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

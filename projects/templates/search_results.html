@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="GET">
+    <input type="text" name="q" placeholder="Search projects...">
+    <button type="submit">Search</button>
+</form>
+
+{% for project in projects %}
+    <h2><a href="{% url 'project_detail' project.id %}">{{ project.title }}</a></h2>
+{% endfor %}
+
+
+</body>
+</html>
