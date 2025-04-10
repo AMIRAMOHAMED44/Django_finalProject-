@@ -1,0 +1,29 @@
+<!-- templates/accounts/account_activation_email.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Activate Your Account</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <h2 style="color: #333;">Hello {{ user.first_name }},</h2>
+        <p style="font-size: 16px; color: #555;">
+            Thank you for signing up! Please click the button below to activate your account:
+        </p>
+        <p style="text-align: center;">
+            <a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}"
+               style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+               Activate Account
+            </a>
+        </p>
+        <p style="font-size: 14px; color: #999; margin-top: 30px;">
+            This link is valid for 24 hours. If it expires, you can request a new activation link.
+        </p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;">
+        <p style="font-size: 12px; color: #aaa; text-align: center;">
+            If you didn’t create an account, you can ignore this email.
+        </p>
+    </div>
+</body>
+</html>

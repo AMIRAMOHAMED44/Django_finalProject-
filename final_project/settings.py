@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -75,13 +76,8 @@ WSGI_APPLICATION = 'final_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Django_finalProject',
-        'USER':'postgres',
-        'PASSWORD':'555',
-        'HOST':'localhost',
-        'PORT':5433
-
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -126,3 +122,26 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+#>>>>>>>>>> notice django that we use special user <<<<<<<<<<<<
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+
+
+LOGIN_REDIRECT_URL = '/'  # user profile  
+LOGOUT_REDIRECT_URL = '/accounts/login/'  # login page
+
+
+#verifivation 
+# settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_email@gmail.com'
+EMAIL_HOST_PASSWORD = 'your_app_password'  # استخدمي app password من Gmail
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
