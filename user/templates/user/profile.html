@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>profile</title>
+</head>
+<body>
+<!-- profile.html -->
+<h1>{{ profile.user.first_name }}'s Profile</h1>
+<p>Phone: {{ profile.phone_number }}</p>
+<p>Birthdate: {{ profile.birthdate }}</p>
+<p>Facebook: <a href="{{ profile.facebook_profile }}">{{ profile.facebook_profile }}</a></p>
+<p>Country: {{ profile.country }}</p>
+<img src="{% if profile.profile_picture %}{{ profile.profile_picture.url }}{% else %}/static/images/default-profile.png{% endif %}" alt="Profile Picture" width="100">
+<a href="{% url 'edit_profile' %}">Edit Profile</a>
+<a href="{% url 'delete_account' %}">Delete Account</a>
+</body>
+</html>

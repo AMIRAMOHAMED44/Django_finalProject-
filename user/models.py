@@ -10,3 +10,5 @@ class UserProfile(models.Model):
     facebook_profile=models.URLField(blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
