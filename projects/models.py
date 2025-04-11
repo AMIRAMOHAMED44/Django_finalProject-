@@ -36,6 +36,7 @@ class Project(models.Model):
         return ratings or 0
 
     def similar_projects(self):
+        # Get projects with similar tags
         return Project.objects.filter(
             tags__in=self.tags.all()
         ).exclude(id=self.id).distinct()[:4]
@@ -46,6 +47,7 @@ class Project(models.Model):
 
     @property
     def aggregate_total_amount(self):
+        """إجمالي التبرعات للمشروع"""
         return self.donations.aggregate(models.Sum('amount'))['amount__sum'] or 0
 
     def __str__(self):
