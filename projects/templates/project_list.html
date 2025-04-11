@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Tag Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Filter by Tags</h5>
+                    <div class="tags-filter d-flex flex-wrap gap-2">
+                        <a href="{% url 'project_list' %}" class="btn {% if not selected_tag %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm">
+                            All Projects
+                        </a>
+                        {% for tag in tags %}
+                        <a href="?tag={{ tag.name }}" class="btn {% if selected_tag == tag.name %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm">
+                            {{ tag.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for project in projects %}
+        <div class="col">
+            <div class="card h-100 shadow-sm hover-card">
+                <!-- Project Images Carousel -->
+                {% if project.images.all %}
+                <div id="carousel{{ project.id }}" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for image in project.images.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ image.image.url }}" class="d-block w-100" alt="Project Image" style="height: 200px; object-fit: cover;">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if project.images.all.count > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ project.id }}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ project.id }}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    {% endif %}
+                </div>
+                {% else %}
+                <img src="{% static 'images/default-project.jpg' %}" class="card-img-top" alt="Default Project Image" style="height: 200px; object-fit: cover;">
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ project.title }}</h5>
+                    <p class="card-text text-muted">{{ project.details|truncatewords:30 }}</p>
+                    
+                    <!-- Project Tags -->
+                    <div class="mb-3">
+                        {% for tag in project.tags.all %}
+                        <a href="?tag={{ tag.name }}" class="badge bg-primary text-decoration-none">{{ tag.name }}</a>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ project.progress_percentage }}%;" 
+                             aria-valuenow="{{ project.progress_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ project.progress_percentage|floatformat:1 }}%
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Target: ${{ project.total_target }}</small>
+                        <small class="text-muted">Raised: ${{ project.total_donations }}</small>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-transparent border-top-0">
+                    <a href="{% url 'project_detail' project.id %}" class="btn btn-primary w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No projects found{% if selected_tag %} for tag "{{ selected_tag }}"{% endif %}.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.2s ease-in-out;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+    }
+    .badge {
+        margin-right: 5px;
+    }
+    .progress {
+        background-color: #e9ecef;
+        border-radius: 0.25rem;
+    }
+    .progress-bar {
+        background-color: #0d6efd;
+        color: white;
+        font-size: 0.875rem;
+    }
+    .tags-filter .btn {
+        border-radius: 20px;
+        padding: 0.375rem 1rem;
+    }
+</style>
+{% endblock %}
