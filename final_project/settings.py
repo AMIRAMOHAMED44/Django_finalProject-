@@ -82,9 +82,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'Django_finalProject',
         'USER':'postgres',
-        'PASSWORD':'555',
+        'PASSWORD':'postgres',
         'HOST':'localhost',
-        'PORT':5433
+        'PORT':5432
 
     }
 }
