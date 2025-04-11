@@ -1,38 +1,44 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.db import models
+
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(default="Default description")   
 
     def __str__(self):
         return self.name
 
 
+
 class Tag(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
 
 
 class Project(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=200)
     details = models.TextField()
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='projects')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     total_target = models.DecimalField(max_digits=10, decimal_places=2)
-    tags = models.CharField(max_length=50, null=True, blank=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    creator = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(upload_to='imgs/', null=True, blank=True)  # حقل الصورة الرئيسية
+    tags = models.ManyToManyField(Tag)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def average_rating(self):
         ratings = self.ratings.all().aggregate(models.Avg('value'))['value__avg']
         return ratings or 0
 
     def similar_projects(self):
-        return Project.objects.filter(tags__in=self.tags.all()).exclude(id=self.id).distinct()[:4]
+        return Project.objects.filter(
+            tags__in=self.tags.all()
+        ).exclude(id=self.id).distinct()[:4]
 
     def is_cancelable(self):
         total_donations = self.donations.aggregate(models.Sum('amount'))['amount__sum'] or 0
@@ -40,7 +46,6 @@ class Project(models.Model):
 
     @property
     def aggregate_total_amount(self):
-        """إجمالي التبرعات للمشروع"""
         return self.donations.aggregate(models.Sum('amount'))['amount__sum'] or 0
 
     def __str__(self):
@@ -49,10 +54,13 @@ class Project(models.Model):
 
 class ProjectImage(models.Model):
     project = models.ForeignKey(Project, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='imgs')
+    image = models.ImageField(upload_to='project_images/')
 
     def __str__(self):
         return f"Image for {self.project.title}"
+
+    class Meta:
+        ordering = ['id']  # Ensure consistent ordering of images
 
 
 class Donation(models.Model):
@@ -116,7 +124,6 @@ class CancelledProject(models.Model):
 
 
 def cancel_project_if_needed(project):
-    """إلغاء المشروع إذا لم تصل التبرعات إلى 25٪ من الهدف."""
     if project.is_cancelable():
         CancelledProject.objects.create(
             project=project,

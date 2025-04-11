@@ -1,24 +1,124 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<h1>Projects</h1>
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Tag Filter Section -->
+    <div class="mb-8">
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Filter Projects</h2>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'project_list' %}" 
+                   class="px-4 py-2 rounded-full text-sm font-medium {% if not selected_tag %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                    All Projects
+                </a>
+                {% for tag in tags %}
+                <a href="?tag={{ tag.name }}" 
+                   class="px-4 py-2 rounded-full text-sm font-medium {% if selected_tag == tag.name %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                    {{ tag.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
-<div class="project-list">
-    {% for project in projects %}
-        <div class="project-card">
-            <h2>Project Image</h2>
-
-            {% if project.image %}
-                <img src="{{ project.image.url }}" alt="{{ project.title }} image" style="max-width: 300px;">
+    <!-- Projects Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for project in projects %}
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 border border-gray-200">
+            <!-- Project Images Carousel -->
+            {% if project.images.all %}
+            <div class="swiper-container h-48">
+                <div class="swiper-wrapper">
+                    {% for image in project.images.all %}
+                    <div class="swiper-slide">
+                        <img src="{{ image.image.url }}" alt="{{ project.title }}" class="w-full h-full object-cover">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if project.images.all.count > 1 %}
+                <div class="swiper-pagination"></div>
+                {% endif %}
+            </div>
             {% else %}
-                <p>No image available.</p>
+            <div class="h-48 bg-gray-100 flex items-center justify-center">
+                <img src="{% static 'images/default-project.jpg' %}" alt="Default project image" class="w-full h-full object-cover">
+            </div>
             {% endif %}
 
+            <div class="p-5">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ project.title }}</h3>
+                <p class="text-gray-600 text-sm mb-4">{{ project.details|truncatewords:30 }}</p>
+                
+                <!-- Project Tags -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    {% for tag in project.tags.all %}
+                    <a href="?tag={{ tag.name }}" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200">
+                        {{ tag.name }}
+                    </a>
+                    {% endfor %}
+                </div>
 
-            <h2>{{ project.title }}</h2>
-            <p>{{ project.details|truncatewords:20 }}</p>
-            <a href="{% url 'project_detail' project.id %}">Show details</a>
+                <!-- Progress Bar -->
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm text-gray-600 mb-1">
+                        <span>{{ project.progress_percentage|floatformat:1 }}% funded</span>
+                        <span>${{ project.total_donations|floatformat:2 }} of ${{ project.total_target }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: {{ project.progress_percentage }}%"></div>
+                    </div>
+                </div>
+
+                <a href="{% url 'project_detail' project.id %}" 
+                   class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg transition-colors">
+                    View Details
+                </a>
+            </div>
         </div>
-    {% endfor %}
+        {% empty %}
+        <div class="col-span-3">
+            <div class="bg-white rounded-lg p-6 text-center">
+                <p class="text-gray-600">
+                    No projects found{% if selected_tag %} for tag "{{ selected_tag }}"{% endif %}.
+                </p>
+                <a href="{% url 'project_list' %}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                    View all projects
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+
+<!-- Initialize Swiper -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.swiper-container').forEach(container => {
+            new Swiper(container, {
+                loop: true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                autoplay: {
+                    delay: 3000,
+                },
+            });
+        });
+    });
+</script>
+
+<!-- Add Swiper CSS -->
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+<style>
+    .swiper-container {
+        --swiper-pagination-color: #3b82f6;
+        --swiper-pagination-bullet-inactive-color: #9ca3af;
+    }
+    .swiper-slide {
+        background: #f3f4f6;
+    }
+</style>
 {% endblock %}
