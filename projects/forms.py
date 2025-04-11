@@ -5,6 +5,8 @@ from django.contrib import messages
 from django import forms
 from .models import ProjectImage
 
+
+
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
@@ -21,16 +23,10 @@ class ProjectForm(forms.ModelForm):
 
 class ProjectImageForm(forms.Form):
     images = forms.FileField(
-        widget=forms.ClearableFileInput(),
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
         required=False,
         label='Project Images'
     )
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['images'].widget.attrs.update({'multiple': True})
-
-# نموذج التبرع
 class DonationForm(forms.ModelForm):
     class Meta:
         model = Donation
@@ -40,7 +36,6 @@ class DonationForm(forms.ModelForm):
         }
 
 
-# نموذج التقييم
 class RatingForm(forms.ModelForm):
     class Meta:
         model = Rating
@@ -50,11 +45,10 @@ class RatingForm(forms.ModelForm):
         }
 
 
-# نموذج التعليقات
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['text']  # حقل النص فقط في التعليق
+        fields = ['text']  
         widgets = {
             'text': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Write your comment here...'}),
         }
