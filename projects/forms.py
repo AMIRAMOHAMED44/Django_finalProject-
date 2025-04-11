@@ -2,8 +2,9 @@ from django import forms
 from .models import Donation, Rating, Project, Comment, ProjectImage
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django import forms
+from .models import ProjectImage
 
-# نموذج إضافة مشروع
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
@@ -17,10 +18,6 @@ class ProjectForm(forms.ModelForm):
             'start_time': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
             'end_time': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
         }
-
-
-from django import forms
-from .models import ProjectImage
 
 class ProjectImageForm(forms.Form):
     images = forms.FileField(

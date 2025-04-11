@@ -5,7 +5,7 @@ from .models import Project, Comment, Rating, ProjectImage, Tag
 from .forms import CommentForm, DonationForm, RatingForm, ProjectForm, ProjectImageForm
 from .models import Project, Category
 from django.core.exceptions import ValidationError
-
+from .models import Project, Category
 
 def project_list(request):
     projects = Project.objects.all().order_by('-created_at').prefetch_related('images', 'tags')
@@ -81,44 +81,36 @@ def project_detail(request, project_id):
     }
     return render(request, 'project_detail.html', context)
 
+
 def create_project(request):
     if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES)  # Include request.FILES for file uploads
-        
+        form = ProjectForm(request.POST)
+        image_form = ProjectImageForm(request.POST, request.FILES)
+
         if form.is_valid():
-            # Save the basic project info
             project = form.save(commit=False)
             project.creator = request.user
-            try:
-                project.save()
-                form.save_m2m()  # Save many-to-many relationships (e.g., tags)
+            project.save()
+            form.save_m2m()  # Save many-to-many relationships (tags)
 
-                # Handle image uploads
-                images = request.FILES.getlist('images')
-                for image in images:
-                    if image.content_type not in ['image/jpeg', 'image/png']:
-                        raise ValidationError("Only JPEG and PNG images are allowed.")
-                    if image.size > 5 * 1024 * 1024:  # 5 MB limit
-                        raise ValidationError("Each image must be less than 5 MB.")
+            # Handle multiple images
+            if 'images' in request.FILES:
+                for image in request.FILES.getlist('images'):
                     ProjectImage.objects.create(project=project, image=image)
 
-                messages.success(request, 'Project created successfully!')
-                return redirect('project_detail', project_id=project.id)
-            except ValidationError as e:
-                messages.error(request, f'File upload error: {e}')
-            except Exception as e:
-                messages.error(request, f'An unexpected error occurred: {str(e)}')
-                print(f"Error: {e}")  # Log the error for debugging
+            messages.success(request, 'Project created successfully!')
+            return redirect('project_list')
         else:
-            messages.error(request, 'Please fix the errors below.')
-            print("Form errors:", form.errors)  # Log form errors for debugging
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = ProjectForm()
+        image_form = ProjectImageForm()
 
-    return render(request, 'create_project.html', {'form': form})
+    return render(request, 'create_project.html', {
+        'form': form,
+        'image_form': image_form
+    })
 
-from django.shortcuts import render
-from .models import Project, Category
 
 def home(request):
     top_rated_projects = Project.objects.annotate(
