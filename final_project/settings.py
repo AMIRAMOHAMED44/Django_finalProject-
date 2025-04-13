@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'projects',
-
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -85,7 +85,6 @@ DATABASES = {
         'PASSWORD':'555',
         'HOST':'localhost',
         'PORT':5434
-
     }
 }
 
@@ -146,4 +145,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
+#>>>>>>>>>> notice django that we use special user <<<<<<<<<<<<
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+
+
+LOGIN_REDIRECT_URL = '/'  # user profile  
+LOGOUT_REDIRECT_URL = '/accounts/login/'  # login page
+
+
+#verifivation 
+# settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_email@gmail.com'
+EMAIL_HOST_PASSWORD = 'your_app_password'  # استخدمي app password من Gmail
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 

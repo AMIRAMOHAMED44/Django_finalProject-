@@ -1,4 +1,5 @@
 pip install django
+django
 django-admin --version
 django-admin startproject final_project
 cd final_project

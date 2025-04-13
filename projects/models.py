@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils import timezone
 
 class Category(models.Model):
@@ -25,7 +25,7 @@ class Project(models.Model):
     end_time = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField(Tag)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
 
     def average_rating(self):
         ratings = self.ratings.all().aggregate(models.Avg('value'))['value__avg']
@@ -62,7 +62,7 @@ class ProjectImage(models.Model):
 
 
 class Donation(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # ✅
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)  # ✅
     project = models.ForeignKey(Project, related_name='donations', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     donated_at = models.DateTimeField(auto_now_add=True)
@@ -72,7 +72,7 @@ class Donation(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     project = models.ForeignKey(Project, related_name='comments', on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -82,7 +82,7 @@ class Comment(models.Model):
 
 
 class ProjectReport(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, related_name='reports', on_delete=models.CASCADE)
     reason = models.TextField()
     reported_at = models.DateTimeField(auto_now_add=True)
@@ -92,7 +92,7 @@ class ProjectReport(models.Model):
 
 
 class CommentReport(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, related_name='reports', on_delete=models.CASCADE)
     reason = models.TextField()
     reported_at = models.DateTimeField(auto_now_add=True)
@@ -102,7 +102,7 @@ class CommentReport(models.Model):
 
 
 class Rating(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # ✅ كده يقبل التقييم من غير مستخدم
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)  # ✅ كده يقبل التقييم من غير مستخدم
     project = models.ForeignKey(Project, related_name='ratings', on_delete=models.CASCADE)
     value = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
     rated_at = models.DateTimeField(auto_now_add=True)
@@ -113,7 +113,7 @@ class Rating(models.Model):
 
 class CancelledProject(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE)
-    cancelled_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    cancelled_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     reason = models.TextField()
     cancelled_at = models.DateTimeField(auto_now_add=True)
 
