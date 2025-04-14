@@ -31,10 +31,13 @@ class SignUpView(CreateView):
 
     def form_valid(self, form):
         user = form.save(commit=False)
+        # If username is not provided, set it to user's email to ensure uniqueness.
+        if not user.username:
+            user.username = user.email
         user.is_active = False  # deactivate the user until email is verified
         user.save()
 
-        # prepare activation email
+        # Prepare activation email
         current_site = get_current_site(self.request)
         subject = 'Activate your account'
         message = render_to_string('accounts/account_activation_email.html', {
