@@ -1,3 +1,26 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Edit Profile</title>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<h1>Edit Profile</h1>-->
+<!--<form method="POST" enctype="multipart/form-data">-->
+<!--    {% csrf_token %}-->
+<!--    <h3>User Info</h3>-->
+<!--    {{ user_form.as_p }}-->
+
+<!--    <h3>Profile Info</h3>-->
+<!--    {{ profile_form.as_p }}-->
+
+<!--    <button type="submit">Save Changes</button>-->
+<!--</form>-->
+
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,18 +28,11 @@
     <title>Edit Profile</title>
 </head>
 <body>
-
-<h1>Edit Profile</h1>
-<form method="POST" enctype="multipart/form-data">
+  <h2>Edit Profile</h2>
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <h3>User Info</h3>
-    {{ user_form.as_p }}
-
-    <h3>Profile Info</h3>
-    {{ profile_form.as_p }}
-
+    {{ form.as_p }}
     <button type="submit">Save Changes</button>
-</form>
-
+  </form>
 </body>
 </html>

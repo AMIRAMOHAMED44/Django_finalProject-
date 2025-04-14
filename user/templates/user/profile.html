@@ -1,18 +1,81 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>profile</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--&lt;!&ndash; profile.html &ndash;&gt;-->
+<!--<h1>{{ profile.user.first_name }}'s Profile</h1>-->
+<!--<p>Phone: {{ profile.phone_number }}</p>-->
+<!--<p>Birthdate: {{ profile.birthdate }}</p>-->
+<!--<p>Facebook: <a href="{{ profile.facebook_profile }}">{{ profile.facebook_profile }}</a></p>-->
+<!--<p>Country: {{ profile.country }}</p>-->
+<!--<img src="{% if profile.profile_picture %}{{ profile.profile_picture.url }}{% else %}/static/images/default-profile.png{% endif %}" alt="Profile Picture" width="100">-->
+<!--<a href="{% url 'edit_profile' %}">Edit Profile</a>-->
+<!--<a href="{% url 'delete_account' %}">Delete Account</a>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>profile</title>
+    <title>Your Profile</title>
 </head>
 <body>
-<!-- profile.html -->
-<h1>{{ profile.user.first_name }}'s Profile</h1>
-<p>Phone: {{ profile.phone_number }}</p>
-<p>Birthdate: {{ profile.birthdate }}</p>
-<p>Facebook: <a href="{{ profile.facebook_profile }}">{{ profile.facebook_profile }}</a></p>
-<p>Country: {{ profile.country }}</p>
-<img src="{% if profile.profile_picture %}{{ profile.profile_picture.url }}{% else %}/static/images/default-profile.png{% endif %}" alt="Profile Picture" width="100">
-<a href="{% url 'edit_profile' %}">Edit Profile</a>
-<a href="{% url 'delete_account' %}">Delete Account</a>
-</body>
+    <h2>Welcome, {{ user.first_name }} {{ user.last_name }}</h2>
+
+    <!-- Profile Picture -->
+    {% if user.profile_picture %}
+        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" width="150" style="border-radius: 50%;">
+    {% else %}
+        <img src="/static/images/default-profile.png" alt="Default Profile" width="150" style="border-radius: 50%;">
+    {% endif %}
+
+    <!-- Profile Details -->
+    <div style="margin-top: 20px;">
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Mobile:</strong> {{ user.mobile|default:"Not provided" }}</p>
+        <p><strong>Birthdate:</strong> {{ user.birthdate|default:"Not provided" }}</p>
+        <p><strong>Facebook:</strong>
+            {% if user.facebook_profile %}
+                <a href="{{ user.facebook_profile }}" target="_blank">{{ user.facebook_profile }}</a>
+            {% else %}
+                Not provided
+            {% endif %}
+        </p>
+        <p><strong>Country:</strong> {{ user.country|default:"Not provided" }}</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 30px;">
+        <a href="{% url 'edit_profile' %}" style="padding: 8px 15px; background: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">
+            Edit Profile
+        </a>
+        <a href="{% url 'delete_account' %}" style="padding: 8px 15px; background: #f44336; color: white; text-decoration: none; border-radius: 4px; margin-left: 10px;">
+            Delete Account
+        </a>
+    </div>
+
+
+<h3>Your Projects</h3>
+<ul>
+  {% for project in projects %}
+    <li>{{ project.title }} - {{ project.status }}</li>
+  {% empty %}
+    <li>You have no projects yet.</li>
+  {% endfor %}
+</ul>
+
+<h3>Your Donations</h3>
+<ul>
+  {% for donation in donations %}
+    <li>{{ donation.project.title }} - {{ donation.amount }} EGP</li>
+  {% empty %}
+    <li>You haven't donated yet.</li>
+  {% endfor %}
+</ul></body>
 </html>
+
+
+
