@@ -82,9 +82,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'Django_finalProject',
         'USER':'postgres',
-        'PASSWORD':'555',
+        'PASSWORD':'123',
         'HOST':'localhost',
-        'PORT':5434
+        'PORT':5432
     }
 }
 
@@ -131,6 +131,8 @@ STATICFILES_DIRS = [
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

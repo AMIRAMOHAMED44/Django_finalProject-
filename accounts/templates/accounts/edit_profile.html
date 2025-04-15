@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Personal Information -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3"><i class="fas fa-info-circle me-2"></i>Personal Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">First Name</label>
+                                    {{ form.first_name }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Last Name</label>
+                                    {{ form.last_name }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mobile Number</label>
+                                {{ form.mobile }}
+                                <small class="text-muted">Egyptian number (e.g. 01012345678)</small>
+                            </div>
+                        </div>
+
+                        <!-- Profile Picture -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3"><i class="fas fa-camera me-2"></i>Profile Picture</h5>
+                            <div class="d-flex align-items-center">
+                                <div class="position-relative me-4">
+                                    <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                                         class="rounded-circle border border-3 border-primary"
+                                         width="120"
+                                         height="120"
+                                         style="object-fit: cover;"
+                                         onerror="this.src='{% static 'images/default_profile.png' %}'">
+                                    <label for="id_profile_picture" class="position-absolute bottom-0 end-0 bg-white rounded-circle p-2 border border-2 border-primary cursor-pointer">
+                                        <i class="fas fa-pencil text-primary"></i>
+                                    </label>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="input-group">
+                                        <input type="file" class="form-control" id="id_profile_picture" name="profile_picture" accept="image/*">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('id_profile_picture').value=''">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">JPG or PNG, max 2MB</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3"><i class="fas fa-ellipsis-h me-2"></i>Additional Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Birthdate</label>
+                                    {{ form.birthdate }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Country</label>
+                                    {{ form.country }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Facebook Profile URL</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fab fa-facebook"></i></span>
+                                    {{ form.facebook_profile }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end border-top pt-3">
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Preview image when selected
+document.getElementById('id_profile_picture').addEventListener('change', function(e) {
+    const [file] = e.target.files;
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.querySelector('.rounded-circle').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}
